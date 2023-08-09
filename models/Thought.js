@@ -1,6 +1,11 @@
 const { Schema, Types, model } = require('mongoose');
 const reactionSchema = require('./Reaction');
 
+function getDate(val) {
+    if (!val) return val;
+    return (val.getMonth()) + "/" + val.getDate() + "/" + val.getFullYear();
+}
+
 const thoughtSchema = new Schema(
     {
         thoughtText: {
@@ -11,7 +16,7 @@ const thoughtSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            default: Date.now, //getter method to format timestamp on query
+            get: getDate,
         },
         username: {
             type: String,
@@ -32,6 +37,6 @@ thoughtSchema.virtual('reactionCount').get(function() {
     return this.reactions.length;
 });
 
-const Thought = model('thought', thoughtSchema);
+const Thought = model('Thought', thoughtSchema);
 
 module.exports = Thought;

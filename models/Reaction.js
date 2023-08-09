@@ -1,5 +1,10 @@
 const { Schema, Types } = require('mongoose');
 
+function getDate(val) {
+    if (!val) return val;
+    return (val.getMonth()) + "/" + val.getDate() + "/" + val.getFullYear();
+}
+
 const reactionSchema = new Schema(
     {
         reactionId: {
@@ -17,7 +22,7 @@ const reactionSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            default: Date.now,
+            get: getDate,
         },
     },
 );

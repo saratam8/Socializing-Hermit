@@ -14,7 +14,7 @@ module.exports = {
     },
     async getOneUser(req, res) {
         try {
-            const user = await User.findOne({ _id: req.params._id})
+            const user = await User.findOne({ _id: req.params.userId})
             .select('-__v')
             .lean();
 
@@ -42,8 +42,9 @@ module.exports = {
     async updateUser(req, res) {
         try { 
             const user = await User.findOneAndUpdate(
-                { _id: req.params.studentId },
-                { runValidators: true, new: true }
+                { _id: req.params.userId },
+                {"username": req.body.username, "email": req.body.email},
+                { new: true }
             )
 
             if (!user) {
@@ -59,13 +60,15 @@ module.exports = {
     },
     async deleteUser(req, res) {
         try {
-            const user = User.findOneAndRemove({ _id: req.params._id });
+            console.log(req.params.userId)
+            const user = await User.findOneAndDelete({ _id: req.params.userId });
 
             if (!user) {
                 return res.status(404).json({ message: 'No user with that ID' });
             }
 
-            res.json({ message: 'User successfully deleted' });
+            await Thought.deleteMany({ _id: { $in: user.thoughts } });
+            res.json({ message: 'User and associated thoughts deleted!' })
         }
         catch (err) {
             console.log(err);
@@ -76,7 +79,7 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $addToSet: { friends: req.body } },
+                { $addToSet: { friends: req.params.friendId } },
                 { runValidators: true, new: true }
             );
 
@@ -95,7 +98,7 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $pull: {friends: {friendId: req.params.friendId}}},
+                { $pull: {friends: req.params.friendId}},
                 { runValidators: true, new: true }
             );
             if (!user) {

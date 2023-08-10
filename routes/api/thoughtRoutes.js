@@ -1,6 +1,5 @@
 const router = require('express').Router();
 
-const { create } = require('domain');
 const {
     getThoughts,
     getOneThought,

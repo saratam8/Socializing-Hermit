@@ -75,7 +75,7 @@ module.exports = {
     async addReaction(req, res) {
         try {
             const thought = await Thought.findOne(
-            { _id: req.params._id},
+            { _id: req.params.thoughtId},
             { $push: {reactions: req.params.reactions}},
             { new: true })
             .select('-__v')
@@ -110,5 +110,5 @@ module.exports = {
             console.log(err);
             return res.status(500).json(err);
         }
-    }
-}
+    },
+};

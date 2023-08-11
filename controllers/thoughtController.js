@@ -71,12 +71,16 @@ module.exports = {
     },
     async deleteThought(req, res) {
         try {
-            console.log(req.params.thoughtId);
             const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
 
             if (!thought) {
                 return res.status(404).json({ message: 'No thought with that ID' });
             }
+
+            await User.findOneAndUpdate(
+                { thoughts: req.params.thoughtId },
+                { $pull: { thoughts: { _id: req.params.thoughtId} } },
+                { runValidators: true, new: true });
 
             res.json({ message: 'Thought successfully deleted' });
         }
@@ -87,7 +91,6 @@ module.exports = {
     },
     async addReaction(req, res) {
         try {
-            console.log(req.body);
             const thought = await Thought.findOneAndUpdate(
             { _id: req.params.thoughtId},
             { $addToSet: {reactions: req.body}},

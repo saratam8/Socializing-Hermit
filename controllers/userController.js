@@ -60,7 +60,6 @@ module.exports = {
     },
     async deleteUser(req, res) {
         try {
-            console.log(req.params.userId)
             const user = await User.findOneAndDelete({ _id: req.params.userId });
 
             if (!user) {
